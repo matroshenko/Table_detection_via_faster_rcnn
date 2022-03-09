@@ -3,6 +3,7 @@ import json
 from collections import defaultdict
 
 import numpy as np
+from PIL import Image
 
 from dataset import DatasetRegistry, DatasetSplit
 from dataset.f_measure_calculator import FMeasureCalculator
@@ -70,9 +71,18 @@ class FinTabNet(DatasetSplit):
                 sample = json.loads(line)
                 file_name = os.path.join(
                     basedir, 'jpg', os.path.splitext(sample['filename'])[0] + '.jpg')
-                bbox = sample['bbox']
+                image_height = Image.open(file_name).size[1]
+
+                bbox = self._get_bbox(image_height, sample['bbox'])
                 result[file_name].append(bbox)
         return result
+
+    def _get_bbox(self, image_height, bbox):
+        left = bbox[0]
+        top = image_height - bbox[3]
+        right = bbox[2]
+        bottom = image_height - bbox[1]
+        return [left, top, right, bottom]
 
     def _filter_index(self, index):
         result = {}
