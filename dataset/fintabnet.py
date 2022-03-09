@@ -69,7 +69,7 @@ class FinTabNet(DatasetSplit):
             for line in f:
                 sample = json.loads(line)
                 file_name = os.path.join(
-                    basedir, 'jpg', os.path.splitext(sample['filename']) + '.jpg')
+                    basedir, 'jpg', os.path.splitext(sample['filename'])[0] + '.jpg')
                 bbox = sample['bbox']
                 result[file_name].append(bbox)
         return result
