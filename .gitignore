@@ -133,3 +133,6 @@ ImageNet-R50-AlignPadding.npz
 
 # VSCode stuff
 .vscode
+
+# nohup command output
+nohup.out
