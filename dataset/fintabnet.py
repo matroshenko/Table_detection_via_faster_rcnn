@@ -62,7 +62,7 @@ class FinTabNet(DatasetSplit):
 
     def _build_index(self, basedir, split):
         jsonl_file_name = os.path.join(
-            basedir, 'FinTableNet_1.0.0_table_{}.jsonl'.format(split))
+            basedir, 'FinTabNet_1.0.0_table_{}.jsonl'.format(split))
 
         result = defaultdict(list)   
         with open(jsonl_file_name, 'r') as f:
