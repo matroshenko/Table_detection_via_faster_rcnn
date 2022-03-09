@@ -23,13 +23,23 @@ class FinTabNet(DatasetSplit):
         result = []
         for file_name, bboxes in self._file_name_to_boxes_list.items():
             item = {}
-            item['file_name'] = os.path.join(self._basedir, 'jpg', file_name)
+            item['file_name'] = file_name
 
             N = len(bboxes)
             item["boxes"] = np.asarray(bboxes, dtype=np.float32)
             item["class"] = np.ones((N,), dtype=np.int32)
             item["is_crowd"] = np.zeros((N,), dtype=np.int8)
             result.append(item)
+
+        return result
+
+    def inference_roidbs(self):
+        result = []
+        for file_path, _ in self._file_name_to_boxes_list.items():
+            item = {}
+            item['file_name'] = file_path
+            company_name, year, file_name = file_path.split('/')[-3:]
+            item['image_id'] = company_name + '_' + year + '_' + os.path.splitext(file_name)[0]
 
         return result
 
@@ -41,8 +51,8 @@ class FinTabNet(DatasetSplit):
         with open(jsonl_file_name, 'r') as f:
             for line in f:
                 sample = json.loads(line)
-                file_name = os.path.splitext(sample['filename']) + '.jpg'
-                table_id = sample['table_id']
+                file_name = os.path.join(
+                    self._basedir, 'jpg', os.path.splitext(sample['filename']) + '.jpg')
                 bbox = sample['bbox']
                 file_name_to_tables_list[file_name].append(bbox)
         return file_name_to_tables_list
