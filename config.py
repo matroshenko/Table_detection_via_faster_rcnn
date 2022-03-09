@@ -92,12 +92,12 @@ _C.MODE_MASK = True        # Faster R-CNN or Mask R-CNN
 _C.MODE_FPN = True
 
 # dataset -----------------------
-_C.DATA.BASEDIR = '/path/to/your/DATA/DIR'
+_C.DATA.BASEDIR = "/root/tensorflow_datasets/downloads/extracted/TAR_GZ.dax-cdn.cdn.appd.clou_dax-fint_1.0.0_fiL85PulBxwAAbmzl9TDlu46d-qaTpFesUCCSZqWlpiC8.tar.gz/fintabnet"
 # All available dataset names are defined in `dataset/coco.py:register_coco`.
 # All TRAIN dataset will be concatenated for training.
-_C.DATA.TRAIN = ('coco_train2017',)   # i.e. trainval35k
+_C.DATA.TRAIN = ('fintabnet_train',)   # i.e. trainval35k
 # Each VAL dataset will be evaluated separately (instead of concatenated)
-_C.DATA.VAL = ('coco_val2017',)  # AKA minival2014
+_C.DATA.VAL = ('fintabnet_val',)  # AKA minival2014
 
 # These two configs will be populated later inside `finalize_configs`.
 _C.DATA.NUM_CATEGORY = -1  # without the background class (e.g., 80 for COCO)
@@ -114,7 +114,7 @@ _C.DATA.FILTER_EMPTY_ANNOTATIONS = True
 _C.DATA.NUM_WORKERS = 10
 
 # backbone ----------------------
-_C.BACKBONE.WEIGHTS = ''
+_C.BACKBONE.WEIGHTS = 'ImageNet-R50-AlignPadding.npz'
 # To train from scratch, set it to empty, and set FREEZE_AT to 0
 # To train from ImageNet pre-trained models, use the one that matches your
 #   architecture from http://models.tensorpack.com under the 'FasterRCNN' section.
