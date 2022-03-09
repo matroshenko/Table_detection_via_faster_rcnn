@@ -22,7 +22,7 @@ from common import (
     filter_boxes_inside_shape, np_iou, point4_to_box, polygons_to_mask,
 )
 from config import config as cfg
-from dataset import DatasetRegistry, register_coco
+from dataset import DatasetRegistry, register_fintabnet
 from utils.np_box_ops import area as np_area
 from utils.np_box_ops import ioa as np_ioa
 
@@ -399,12 +399,10 @@ def get_eval_dataflow(name, shard=0, num_shards=1):
 if __name__ == "__main__":
     import os
     from tensorpack.dataflow import PrintData
-    from config import finalize_configs
+    from config import config, finalize_configs
 
-    register_coco(os.path.expanduser("~/data/coco"))
-    finalize_configs()
+    register_fintabnet(cfg.DATA.BASEDIR)
+    finalize_configs(False)
     ds = get_train_dataflow()
     ds = PrintData(ds, 10)
-    TestDataSpeed(ds, 50000).start()
-    for _ in ds:
-        pass
+    TestDataSpeed(ds, 5000).start()
