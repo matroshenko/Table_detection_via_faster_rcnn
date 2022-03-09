@@ -76,3 +76,10 @@ class FinTabNet(DatasetSplit):
         left2, top2, right2, bottom2 = bbox2
         return (left1 < right2 and left2 < right1
             and top1 < bottom2 and top2 < bottom1)
+
+
+def register_fintabnet(basedir):
+    for split in ["train", "val", "test"]:
+        name = "fintabnet_" + split
+        DatasetRegistry.register(name, lambda x=split: FinTabNet(basedir, x))
+        DatasetRegistry.register_metadata(name, "class_names", ["BG", "table"])
