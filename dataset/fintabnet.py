@@ -1,5 +1,6 @@
 import os
 import json
+from collections import defaultdict
 
 import numpy as np
 
@@ -10,43 +11,19 @@ class MarkupError(Exception):
   pass
 
 
-class Table(object):
-  def __init__(self, id, bbox):
-    self.id = id
-    self.bbox = bbox
-
-
 class FinTabNet(DatasetSplit):
     def __init__(self, basedir, split):
         assert split in ['train', 'val', 'test']
 
-        self._basedir = basedir
-        self._split = split
+        raw_file_name_to_boxes_list = self._build_file_name_to_boxes_list(basedir, split)
+        self._file_name_to_boxes_list = self._filter_items_with_invalid_boxes(
+            raw_file_name_to_boxes_list)
 
     def training_roidbs(self):
-        jsonl_file_name = os.path.join(
-            self._basedir, 'FinTableNet_1.0.0_table_{}.jsonl'.format(self._split))
-
-        file_name_to_tables_list = {}    
-        with open(jsonl_file_name, 'r') as f:
-            for line in f:
-                sample = json.loads(line)
-                file_name = os.path.splitext(sample['filename']) + '.jpg'
-                table_id = sample['table_id']
-                bbox = sample['bbox']
-                file_name_to_tables_list[file_name].append(Table(table_id, bbox))
-
         result = []
-        for file_name, tables_list in file_name_to_tables_list.items():
+        for file_name, bboxes in self._file_name_to_boxes_list.items():
             item = {}
             item['file_name'] = os.path.join(self._basedir, 'jpg', file_name)
-            bboxes = [table.bbox for table in tables_list]
-
-            try:
-                self._check_valid_bboxes(bboxes)
-                self._check_no_intersection(bboxes)
-            except MarkupError:
-                continue
 
             N = len(bboxes)
             item["boxes"] = np.asarray(bboxes, dtype=np.float32)
@@ -54,6 +31,32 @@ class FinTabNet(DatasetSplit):
             item["is_crowd"] = np.zeros((N,), dtype=np.int8)
             result.append(item)
 
+        return result
+
+    def _build_file_name_to_boxes_list(self, basedir, split):
+        jsonl_file_name = os.path.join(
+            basedir, 'FinTableNet_1.0.0_table_{}.jsonl'.format(split))
+
+        file_name_to_tables_list = defaultdict(list)   
+        with open(jsonl_file_name, 'r') as f:
+            for line in f:
+                sample = json.loads(line)
+                file_name = os.path.splitext(sample['filename']) + '.jpg'
+                table_id = sample['table_id']
+                bbox = sample['bbox']
+                file_name_to_tables_list[file_name].append(bbox)
+        return file_name_to_tables_list
+
+    def _filter_items_with_invalid_boxes(self, file_name_to_boxes_list):
+        result = {}
+        for file_name, bboxes in file_name_to_boxes_list.items():
+            try:
+                self._check_valid_bboxes(bboxes)
+                self._check_no_intersection(bboxes)
+
+                result[file_name] = bboxes
+            except MarkupError:
+                continue
         return result
 
     def _check_valid_bboxes(self, bboxes):
