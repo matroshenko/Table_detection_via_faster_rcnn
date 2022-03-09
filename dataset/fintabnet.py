@@ -43,6 +43,7 @@ class FinTabNet(DatasetSplit):
             item = {}
             item['file_name'] = file_path
             item['image_id'] = image_id
+            result.append(item)
 
         return result
 
