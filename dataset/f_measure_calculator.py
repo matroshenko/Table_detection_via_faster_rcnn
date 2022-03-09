@@ -4,9 +4,8 @@ import utils
 
 
 class FMeasureCalculator(object):
-    def __init__(self, iou_threshold, name=None):
+    def __init__(self, iou_threshold):
         assert iou_threshold >= 0.5
-        super().__init__(name=name)
         self._threshold = iou_threshold
 
         self._matched_objects_count = 0
