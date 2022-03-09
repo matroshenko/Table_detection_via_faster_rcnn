@@ -130,3 +130,6 @@ dmypy.json
 
 # Backbone weights.
 ImageNet-R50-AlignPadding.npz
+
+# VSCode stuff
+.vscode
