@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Backbone weights.
+ImageNet-R50-AlignPadding.npz
