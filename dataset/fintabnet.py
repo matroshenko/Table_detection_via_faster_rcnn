@@ -7,6 +7,8 @@ import numpy as np
 from dataset import DatasetRegistry, DatasetSplit
 from f_measure_calculator import FMeasureCalculator
 
+__all__ = ['register_fintabnet']
+
 
 class MarkupError(Exception):
   pass
