@@ -5,6 +5,7 @@ from collections import defaultdict
 import numpy as np
 
 from dataset import DatasetRegistry, DatasetSplit
+from f_measure_calculator import FMeasureCalculator
 
 
 class MarkupError(Exception):
@@ -15,13 +16,13 @@ class FinTabNet(DatasetSplit):
     def __init__(self, basedir, split):
         assert split in ['train', 'val', 'test']
 
-        raw_file_name_to_boxes_list = self._build_file_name_to_boxes_list(basedir, split)
-        self._file_name_to_boxes_list = self._filter_items_with_invalid_boxes(
-            raw_file_name_to_boxes_list)
+        index = self._build_index(basedir, split)
+        self._index = self._filter_index(
+            index)
 
     def training_roidbs(self):
         result = []
-        for file_name, bboxes in self._file_name_to_boxes_list.items():
+        for _, (file_name, bboxes) in self._index.items():
             item = {}
             item['file_name'] = file_name
 
@@ -35,36 +36,50 @@ class FinTabNet(DatasetSplit):
 
     def inference_roidbs(self):
         result = []
-        for file_path, _ in self._file_name_to_boxes_list.items():
+        for image_id, (file_path, _) in self._index.items():
             item = {}
             item['file_name'] = file_path
-            company_name, year, file_name = file_path.split('/')[-3:]
-            item['image_id'] = company_name + '_' + year + '_' + os.path.splitext(file_name)[0]
+            item['image_id'] = image_id
 
         return result
 
-    def _build_file_name_to_boxes_list(self, basedir, split):
+    def eval_inference_results(self, results, output=None):
+        fscore_calculators = [FMeasureCalculator(0.5), FMeasureCalculator(0.75)]
+
+        for item in results:
+            image_id = item['image_id']
+            y_true = self._index[image_id][1]
+            y_pred = item['bbox']
+            for calculator in fscore_calculators:
+                calculator.update_state(y_true, y_pred)
+
+        return {
+            'F1@0.5': fscore_calculators[0].result(),
+            'F1@0.75': fscore_calculators[1].result() 
+            }
+
+    def _build_index(self, basedir, split):
         jsonl_file_name = os.path.join(
             basedir, 'FinTableNet_1.0.0_table_{}.jsonl'.format(split))
 
-        file_name_to_tables_list = defaultdict(list)   
+        result = defaultdict(list)   
         with open(jsonl_file_name, 'r') as f:
             for line in f:
                 sample = json.loads(line)
                 file_name = os.path.join(
-                    self._basedir, 'jpg', os.path.splitext(sample['filename']) + '.jpg')
+                    basedir, 'jpg', os.path.splitext(sample['filename']) + '.jpg')
                 bbox = sample['bbox']
-                file_name_to_tables_list[file_name].append(bbox)
-        return file_name_to_tables_list
+                result[file_name].append(bbox)
+        return result
 
-    def _filter_items_with_invalid_boxes(self, file_name_to_boxes_list):
+    def _filter_index(self, index):
         result = {}
-        for file_name, bboxes in file_name_to_boxes_list.items():
+        for file_path, bboxes in index.items():
             try:
                 self._check_valid_bboxes(bboxes)
                 self._check_no_intersection(bboxes)
 
-                result[file_name] = bboxes
+                result[self._get_image_id(file_path)] = (file_path, bboxes)
             except MarkupError:
                 continue
         return result
@@ -89,6 +104,10 @@ class FinTabNet(DatasetSplit):
         left2, top2, right2, bottom2 = bbox2
         return (left1 < right2 and left2 < right1
             and top1 < bottom2 and top2 < bottom1)
+
+    def _get_image_id(self, file_path):
+        company_name, year, file_name = file_path.split('/')[-3:]
+        return company_name + '_' + year + '_' + os.path.splitext(file_name)[0]
 
 
 def register_fintabnet(basedir):
