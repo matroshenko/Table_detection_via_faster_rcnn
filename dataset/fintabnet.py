@@ -5,7 +5,7 @@ from collections import defaultdict
 import numpy as np
 
 from dataset import DatasetRegistry, DatasetSplit
-from f_measure_calculator import FMeasureCalculator
+from dataset.f_measure_calculator import FMeasureCalculator
 
 __all__ = ['register_fintabnet']
 
