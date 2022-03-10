@@ -48,12 +48,16 @@ class FinTabNet(DatasetSplit):
         return result
 
     def eval_inference_results(self, results, output=None):
+        results_index = defaultdict(list)
+        for item in results:
+            results_index[item['image_id']].append(item['bbox'])
+
         fscore_calculators = [FMeasureCalculator(0.5), FMeasureCalculator(0.75)]
 
-        for item in results:
-            image_id = item['image_id']
-            y_true = self._index[image_id][1]
-            y_pred = item['bbox']
+        for image_id, (_, markup_bboxes) in self._index.items():
+            predicted_bboxes = results_index[image_id]
+            y_true = np.asarray(markup_bboxes, dtype=np.float32)
+            y_pred = np.asarray(predicted_bboxes, dtype=np.float32)
             for calculator in fscore_calculators:
                 calculator.update_state(y_true, y_pred)
 
