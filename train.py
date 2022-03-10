@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--load', help='Load a model to start training from. It overwrites BACKBONE.WEIGHTS')
     parser.add_argument('--logdir', help='Log directory. Will remove the old one if already exists.',
-                        default='train_log/maskrcnn')
+                        default='train_log/frcnn')
     parser.add_argument('--config', help="A list of KEY=VALUE to overwrite those defined in config.py", nargs='+')
 
     args = parser.parse_args()
