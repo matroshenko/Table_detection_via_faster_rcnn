@@ -61,10 +61,16 @@ class FinTabNet(DatasetSplit):
             for calculator in fscore_calculators:
                 calculator.update_state(y_true, y_pred)
 
-        return {
+        result = {
             'F1@0.5': fscore_calculators[0].result(),
             'F1@0.75': fscore_calculators[1].result() 
             }
+            
+        if output is not None:
+            with open(output, 'w') as f:
+                json.dump(result, f)
+
+        return result
 
     def _build_index(self, basedir, split):
         jsonl_file_name = os.path.join(
