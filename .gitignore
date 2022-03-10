@@ -136,3 +136,6 @@ ImageNet-R50-AlignPadding.npz
 
 # nohup command output
 nohup.out
+
+# training logs
+train_log
