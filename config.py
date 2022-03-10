@@ -153,8 +153,8 @@ _C.TRAIN.STARTING_EPOCH = 1  # the first epoch to start with, useful to continue
 # When the total bs!=8, the actual iterations to decrease learning rate, and
 # the base learning rate are computed from BASE_LR and LR_SCHEDULE.
 # Therefore, there is *no need* to modify the config if you only change the number of GPUs.
-_C.TRAIN.LR_SCHEDULE = "1x"      # "1x" schedule in detectron
-_C.TRAIN.EVAL_PERIOD = 50  # period (epochs) to run evaluation
+_C.TRAIN.LR_SCHEDULE = "[12000, 16000, 18000]"      # "1x" schedule in detectron
+_C.TRAIN.EVAL_PERIOD = 0  # period (epochs) to run evaluation, 0 -- no evaluation.
 _C.TRAIN.CHECKPOINT_PERIOD = 20  # period (epochs) to save model
 
 # preprocessing --------------------
@@ -228,7 +228,7 @@ _C.TEST.FRCNN_NMS_THRESH = 0.5
 
 # Smaller threshold value gives significantly better mAP. But we use 0.05 for consistency with Detectron.
 # mAP with 1e-4 threshold can be found at https://github.com/tensorpack/tensorpack/commit/26321ae58120af2568bdbf2269f32aa708d425a8#diff-61085c48abee915b584027e1085e1043  # noqa
-_C.TEST.RESULT_SCORE_THRESH = 0.05
+_C.TEST.RESULT_SCORE_THRESH = 0.5
 _C.TEST.RESULT_SCORE_THRESH_VIS = 0.5   # only visualize confident results
 _C.TEST.RESULTS_PER_IM = 100
 
