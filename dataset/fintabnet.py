@@ -57,7 +57,11 @@ class FinTabNet(DatasetSplit):
         for image_id, (_, markup_bboxes) in self._index.items():
             predicted_bboxes = results_index[image_id]
             y_true = np.asarray(markup_bboxes, dtype=np.float32)
-            y_pred = np.asarray(predicted_bboxes, dtype=np.float32)
+            if predicted_bboxes:
+                y_pred = np.asarray(predicted_bboxes, dtype=np.float32)
+            else:
+                y_pred = np.empty((0, 4))
+
             for calculator in fscore_calculators:
                 calculator.update_state(y_true, y_pred)
 
@@ -65,7 +69,7 @@ class FinTabNet(DatasetSplit):
             'F1@0.5': fscore_calculators[0].result(),
             'F1@0.75': fscore_calculators[1].result() 
             }
-            
+
         if output is not None:
             with open(output, 'w') as f:
                 json.dump(result, f)
