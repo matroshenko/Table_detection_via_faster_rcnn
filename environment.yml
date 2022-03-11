@@ -1,6 +1,7 @@
 name: tabdet
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - cudatoolkit=10.0.130
   - cudnn=7.6.0
@@ -8,6 +9,7 @@ dependencies:
   - python=3.7.11
   - cython
   - numpy=1.21
+  - poppler
   - pip:
     - jupyter==1.0.0
     - matplotlib==3.5.1
