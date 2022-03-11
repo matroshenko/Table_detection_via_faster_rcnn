@@ -42,6 +42,7 @@ R50 models using NVidia GeForce GTX 1080 Ti.
 | Model | F1@0.5 | F1@0.75 |
 |-------|--------|---------|
 | R50-FPN FRCNN* | 0.952 | 0.944 |
+
 \* R50 = ResNet50, FPN = Feature pyramid pooling, FRCNN = Faster RCNN
 
 # Images
