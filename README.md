@@ -22,7 +22,6 @@ To train on a single machine (with 1 or more GPUs):
 ```
 
 All options can be changed by either the command line or the `config.py` file (recommended).
-Some reasonable configurations are listed in the table below.
 See [config.py](config.py) for details about how to correctly set `BACKBONE.WEIGHTS` and other configs.
 
 ## Evaluation
