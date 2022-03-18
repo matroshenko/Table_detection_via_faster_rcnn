@@ -34,15 +34,7 @@ To evaluate the performance of a model on a dataset run
 
 # Results
 
-All models were trained on fintabnet_train and evaluated on fintabnet_val datasets using
-F1 score with IOU thresholds 0.5 and 0.75. All models were fine-tuned from ImageNet pretrained 
-R50 models using NVidia GeForce GTX 1080 Ti.
-
-| Model | F1@0.5 | F1@0.75 |
-|-------|--------|---------|
-| R50-FPN FRCNN* | 0.952 | 0.944 |
-
-\* R50 = ResNet50, FPN = Feature pyramid pooling, FRCNN = Faster RCNN
+See releases.
 
 # Images
 
