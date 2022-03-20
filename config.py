@@ -153,7 +153,7 @@ _C.TRAIN.STARTING_EPOCH = 1  # the first epoch to start with, useful to continue
 # When the total bs!=8, the actual iterations to decrease learning rate, and
 # the base learning rate are computed from BASE_LR and LR_SCHEDULE.
 # Therefore, there is *no need* to modify the config if you only change the number of GPUs.
-_C.TRAIN.LR_SCHEDULE = "[12000, 16000, 18000]"      # "1x" schedule in detectron
+_C.TRAIN.LR_SCHEDULE = "1x"      # "1x" schedule in detectron
 _C.TRAIN.EVAL_PERIOD = 0  # period (epochs) to run evaluation, 0 -- no evaluation.
 _C.TRAIN.CHECKPOINT_PERIOD = 20  # period (epochs) to save model
 
