@@ -22,7 +22,6 @@ To train on a single machine (with 1 or more GPUs):
 ```
 
 All options can be changed by either the command line or the `config.py` file (recommended).
-Some reasonable configurations are listed in the table below.
 See [config.py](config.py) for details about how to correctly set `BACKBONE.WEIGHTS` and other configs.
 
 ## Evaluation
@@ -35,14 +34,7 @@ To evaluate the performance of a model on a dataset run
 
 # Results
 
-All models were trained on fintabnet_train and evaluated on fintabnet_val datasets using
-F1 score with IOU thresholds 0.5 and 0.75. All models were fine-tuned from ImageNet pretrained 
-R50 models using NVidia GeForce GTX 1080 Ti.
-
-| Model | F1@0.5 | F1@0.75 |
-|-------|--------|---------|
-| R50-FPN FRCNN* | 0.952 | 0.944 |
-\* R50 = ResNet50, FPN = Feature pyramid pooling, FRCNN = Faster RCNN
+See releases.
 
 # Images
 
