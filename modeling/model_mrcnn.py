@@ -56,17 +56,17 @@ def maskrcnn_loss(mask_logits, fg_labels, fg_target_masks):
 def maskrcnn_upXconv_head(feature, num_category, num_convs, norm=None):
     """
     Args:
-        feature (NxCx s x s): size is 7 in C4 models and 14 in FPN models.
+        feature (N x s x s x C): size is 7 in C4 models and 14 in FPN models.
         num_category(int):
         num_convs (int): number of convolution layers
         norm (str or None): either None or 'GN'
 
     Returns:
-        mask_logits (N x num_category x 2s x 2s):
+        mask_logits (N x 2s x 2s x num_category):
     """
     assert norm in [None, 'GN'], norm
     l = feature
-    with argscope([Conv2D, Conv2DTranspose], data_format='channels_first',
+    with argscope([Conv2D, Conv2DTranspose], data_format='channels_last',
                   kernel_initializer=tfv1.variance_scaling_initializer(
                       scale=2.0, mode='fan_out',
                       distribution='untruncated_normal')):

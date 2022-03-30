@@ -236,7 +236,7 @@ def fastrcnn_2fc_head(feature):
 def fastrcnn_Xconv1fc_head(feature, num_convs, norm=None):
     """
     Args:
-        feature (NCHW):
+        feature (NHWC):
         num_classes(int): num_category + 1
         num_convs (int): number of conv layers
         norm (str or None): either None or 'GN'
@@ -246,7 +246,7 @@ def fastrcnn_Xconv1fc_head(feature, num_convs, norm=None):
     """
     assert norm in [None, 'GN'], norm
     l = feature
-    with argscope(Conv2D, data_format='channels_first',
+    with argscope(Conv2D, data_format='channels_last',
                   kernel_initializer=tfv1.variance_scaling_initializer(
                       scale=2.0, mode='fan_out',
                       distribution='untruncated_normal')):
