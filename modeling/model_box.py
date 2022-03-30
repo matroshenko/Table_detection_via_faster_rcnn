@@ -184,7 +184,7 @@ class RPNAnchors(namedtuple('_RPNAnchors', ['boxes', 'gt_labels', 'gt_boxes'])):
         """
         Slice anchors to the spatial size of this featuremap.
         """
-        shape2d = tf.shape(featuremap)[2:]  # h,w
+        shape2d = tf.shape(featuremap)[-3:-1]  # h,w
         slice3d = tf.concat([shape2d, [-1]], axis=0)
         slice4d = tf.concat([shape2d, [-1, -1]], axis=0)
         boxes = tf.slice(self.boxes, [0, 0, 0, 0], slice4d)
