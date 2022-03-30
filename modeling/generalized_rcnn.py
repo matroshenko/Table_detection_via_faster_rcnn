@@ -119,7 +119,7 @@ class ResNetC4Model(GeneralizedRCNN):
             inputs['anchor_labels'], inputs['anchor_boxes'])
         anchors = anchors.narrow_to(featuremap)
 
-        image_shape2d = tf.shape(image)[2:]     # h,w
+        image_shape2d = tf.shape(image)[-3:-1]     # h,w
         pred_boxes_decoded = anchors.decode_logits(rpn_box_logits)  # fHxfWxNAx4, floatbox
         proposal_boxes, proposal_scores = generate_rpn_proposals(
             tf.reshape(pred_boxes_decoded, [-1, 4]),
@@ -230,7 +230,7 @@ class ResNetFPNModel(GeneralizedRCNN):
     def rpn(self, image, features, inputs):
         assert len(cfg.RPN.ANCHOR_SIZES) == len(cfg.FPN.ANCHOR_STRIDES)
 
-        image_shape2d = tf.shape(image)[2:]     # h,w
+        image_shape2d = tf.shape(image)[-3:-1]     # h,w
         all_anchors_fpn = get_all_anchors_fpn(
             strides=cfg.FPN.ANCHOR_STRIDES,
             sizes=cfg.RPN.ANCHOR_SIZES,
