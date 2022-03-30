@@ -123,7 +123,7 @@ def get_norm(zero_init=False):
 
 
 def resnet_shortcut(l, n_out, stride, activation=tf.identity):
-    n_in = l.shape[1]
+    n_in = l.shape[-1]
     if n_in != n_out:   # change dimension when channel is not the same
         # TF's SAME mode output ceil(x/stride), which is NOT what we want when x is odd and stride is 2
         # In FPN mode, the images are pre-padded already.
