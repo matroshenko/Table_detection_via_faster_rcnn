@@ -262,7 +262,7 @@ class ResNetFPNModel(GeneralizedRCNN):
         return BoxProposals(proposal_boxes), losses
 
     def roi_heads(self, image, features, proposals, targets):
-        image_shape2d = tf.shape(image)[2:]     # h,w
+        image_shape2d = tf.shape(image)[-3:-1]     # h,w
         assert len(features) == 5, "Features have to be P23456!"
         gt_boxes, gt_labels, *_ = targets
 
