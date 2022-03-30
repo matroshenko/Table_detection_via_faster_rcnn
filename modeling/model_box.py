@@ -85,12 +85,12 @@ def crop_and_resize(image, boxes, box_ind, crop_size, pad_border=True):
     Aligned version of tf.image.crop_and_resize, following our definition of floating point boxes.
 
     Args:
-        image: NCHW
+        image: NHWC
         boxes: nx4, x1y1x2y2
         box_ind: (n,)
         crop_size (int):
     Returns:
-        n,C,size,size
+        n x size x size x C
     """
     assert isinstance(crop_size, int), crop_size
     boxes = tf.stop_gradient(boxes)
@@ -98,7 +98,7 @@ def crop_and_resize(image, boxes, box_ind, crop_size, pad_border=True):
     # TF's crop_and_resize produces zeros on border
     if pad_border:
         # this can be quite slow
-        image = tf.pad(image, [[0, 0], [0, 0], [1, 1], [1, 1]], mode='SYMMETRIC')
+        image = tf.pad(image, [[0, 0], [1, 1], [1, 1], [0, 0]], mode='SYMMETRIC')
         boxes = boxes + 1
 
     @under_name_scope()
@@ -134,14 +134,12 @@ def crop_and_resize(image, boxes, box_ind, crop_size, pad_border=True):
 
         return tf.concat([ny0, nx0, ny0 + nh, nx0 + nw], axis=1)
 
-    image_shape = tf.shape(image)[2:]
+    image_shape = tf.shape(image)[-3:-1]
 
     boxes = transform_fpcoor_for_tf(boxes, image_shape, [crop_size, crop_size])
-    image = tf.transpose(image, [0, 2, 3, 1])   # nhwc
     ret = tf.image.crop_and_resize(
         image, boxes, tf.cast(box_ind, tf.int32),
         crop_size=[crop_size, crop_size])
-    ret = tf.transpose(ret, [0, 3, 1, 2])   # ncss
     return ret
 
 
@@ -149,12 +147,12 @@ def crop_and_resize(image, boxes, box_ind, crop_size, pad_border=True):
 def roi_align(featuremap, boxes, resolution):
     """
     Args:
-        featuremap: 1xCxHxW
+        featuremap: 1xHxWxC
         boxes: Nx4 floatbox
         resolution: output spatial resolution
 
     Returns:
-        NxCx res x res
+        N x res x res x C
     """
     # sample 4 locations per roi bin
     ret = crop_and_resize(
@@ -165,7 +163,7 @@ def roi_align(featuremap, boxes, resolution):
         avgpool = tf.nn.avg_pool2d
     except AttributeError:
         avgpool = tf.nn.avg_pool
-    ret = avgpool(ret, [1, 1, 2, 2], [1, 1, 2, 2], padding='SAME', data_format='NCHW')
+    ret = avgpool(ret, [1, 2, 2, 1], [1, 2, 2, 1], padding='SAME', data_format='NHWC')
     return ret
 
 

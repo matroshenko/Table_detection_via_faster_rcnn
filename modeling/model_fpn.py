@@ -109,7 +109,7 @@ def multilevel_roi_align(features, rcnn_boxes, resolution):
         rcnn_boxes (tf.Tensor): nx4 boxes
         resolution (int): output spatial resolution
     Returns:
-        NxC x res x res
+        N x res x res x C
     """
     assert len(features) == 4, features
     # Reassign rcnn_boxes to levels
@@ -123,7 +123,7 @@ def multilevel_roi_align(features, rcnn_boxes, resolution):
             all_rois.append(roi_align(featuremap, boxes_on_featuremap, resolution))
 
     # this can fail if using TF<=1.8 with MKL build
-    all_rois = tf.concat(all_rois, axis=0)  # NCHW
+    all_rois = tf.concat(all_rois, axis=0)  # NHWC
     # Unshuffle to the original order, to match the original samples
     level_id_perm = tf.concat(level_ids, axis=0)  # A permutation of 1~N
     level_id_invert_perm = tf.math.invert_permutation(level_id_perm)
