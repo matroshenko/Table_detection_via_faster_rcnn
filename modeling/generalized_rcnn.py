@@ -27,7 +27,7 @@ class GeneralizedRCNN(ModelDesc):
     def preprocess(self, image):
         image = tf.expand_dims(image, 0)
         image = image_preprocess(image, bgr=True)
-        return tf.transpose(image, [0, 3, 1, 2])
+        return image
 
     def optimizer(self):
         lr = tf.get_variable('learning_rate', initializer=0., trainable=False)
@@ -61,7 +61,7 @@ class GeneralizedRCNN(ModelDesc):
             gt_masks = tf.cast(unpackbits_masks(inputs.pop("gt_masks_packed")), tf.uint8, name="gt_masks")
             inputs["gt_masks"] = gt_masks
 
-        image = self.preprocess(inputs['image'])     # 1CHW
+        image = self.preprocess(inputs['image'])     # 1HWC
 
         features = self.backbone(image)
         anchor_inputs = {k: v for k, v in inputs.items() if k.startswith('anchor_')}
