@@ -137,7 +137,7 @@ class ResNetC4Model(GeneralizedRCNN):
         return BoxProposals(proposal_boxes), losses
 
     def roi_heads(self, image, features, proposals, targets):
-        image_shape2d = tf.shape(image)[2:]     # h,w
+        image_shape2d = tf.shape(image)[-3:-1]     # h,w
         featuremap = features[0]
 
         gt_boxes, gt_labels, *_ = targets
@@ -153,7 +153,7 @@ class ResNetC4Model(GeneralizedRCNN):
 
         feature_fastrcnn = resnet_conv5(roi_resized, cfg.BACKBONE.RESNET_NUM_BLOCKS[-1])    # nxcx7x7
         # Keep C5 feature to be shared with mask branch
-        feature_gap = GlobalAvgPooling('gap', feature_fastrcnn, data_format='channels_first')
+        feature_gap = GlobalAvgPooling('gap', feature_fastrcnn, data_format='channels_last')
         fastrcnn_label_logits, fastrcnn_box_logits = fastrcnn_outputs('fastrcnn', feature_gap, cfg.DATA.NUM_CATEGORY)
 
         fastrcnn_head = FastRCNNHead(proposals, fastrcnn_box_logits, fastrcnn_label_logits, gt_boxes,
